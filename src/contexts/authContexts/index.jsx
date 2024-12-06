@@ -2,7 +2,7 @@ import React,{ useContext, useEffect, useState } from "react";
 import { auth } from "../../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doSignInUserWithEmailAndPassword } from "../../firebase/auth";
-import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
+import { doCreateUserWithEmailAndPassword, doSignInWithGoogle, } from "../../firebase/auth";
 import { doSignOut } from "../../firebase/auth";
 
 const AuthContext = React.createContext();
@@ -44,6 +44,19 @@ export function AuthProvider({children}){
         await doSignOut();
     }
 
+    async function loginWithGoogle() {
+        try {
+          const result = await doSignInWithGoogle(); 
+          const user = result.user;
+          setCurrentUser({ ...user });
+          setUserLoggedIn(true);
+          return user;
+        } catch (error) {
+          console.error("Google Login Error:", error);
+          throw error;
+        }
+      }
+
     const value = {
         currentUser,
         userLoggedIn,
@@ -51,6 +64,7 @@ export function AuthProvider({children}){
         login,
         register,
         logout,
+        loginWithGoogle,
     }
 
     return (

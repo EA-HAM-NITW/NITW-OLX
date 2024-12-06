@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useAuth } from '../contexts/authContexts';
-import { doSignInUserWithEmailAndPassword } from '../firebase/auth';
+import { doSignInUserWithEmailAndPassword, doSignInWithGoogle } from '../firebase/auth';
 
 function Login() {
     const { userLoggedIn } = useAuth();
@@ -13,6 +13,16 @@ function Login() {
         try {
             await doSignInUserWithEmailAndPassword(email, password);
             window.location.href = '/dashboard'; // Redirect after login
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+            const user = await doSignInWithGoogle(); // Call the Google sign-in function
+            console.log("Google login successful:", user);
+            window.location.href = '/dashboard'; // Redirect after successful login
         } catch (error) {
             setError(error.message);
         }
@@ -40,6 +50,9 @@ function Login() {
                 />
                 <button type="submit">Log In</button>
             </form>
+            <button onClick={handleGoogleLogin} style={{ marginTop: '10px' }}>
+                Continue with Google
+            </button>
         </div>
     );
 }
