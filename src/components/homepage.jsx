@@ -16,6 +16,13 @@ function Homepage() {
         { id: 4, title: 'T-shirt (M)', price: '₹300', category: 'Clothing' },
     ];
 
+    const categories = [
+        {id: 1, name: 'Electronics'},
+        {id: 2, name: 'Books'},
+        {id: 3, name: 'Furniture'},
+        {id: 4, name: 'Clothing'},
+    ]
+
     // Function to handle View Details button click
     const handleViewDetails = (itemId) => {
         if (!currentUser) {
@@ -25,6 +32,19 @@ function Homepage() {
         }
     };
 
+    const handleCategories = (categoryName) => {
+        if (!currentUser) {
+            navigate('/login');  // If not logged in, redirect to login page
+        } else {
+            navigate(`/category-details/${categoryName}`);  // If logged in, go to item details page
+        }
+    }
+
+    const handleSell = () =>{
+        if(!currentUser) navigate('/login');
+        else navigate('/sell');
+    }
+
     return (
         <div>
             <TopBar/>
@@ -32,7 +52,7 @@ function Homepage() {
             <div className="bg-light text-center py-5">
                 <h1>Welcome to CampusMarket</h1>
                 <p>Buy and sell items with ease on your campus!</p>
-                <Button variant="primary" href="/post-ad">Sell an Item</Button>
+                <Button variant="primary" onClick={()=>handleSell()}>Sell or Rent Out an Item</Button>
             </div>
 
             <Container className="mt-5">
@@ -50,6 +70,23 @@ function Homepage() {
                                     <Button variant="primary" onClick={() => handleViewDetails(item.id)}>
                                         View Details
                                     </Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            </Container>
+
+            <Container className="mt-5">
+                <h2 className="mb-4">Categories</h2>
+                <Row>
+                    {categories.map(category => (
+                        <Col key={category.id} sm={12} md={6} lg={4} className="mb-4">
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title style={{cursor:'pointer'}} onClick={()=> handleCategories(category.name)}>{category.name}</Card.Title>
+                                    
+                                    
                                 </Card.Body>
                             </Card>
                         </Col>
