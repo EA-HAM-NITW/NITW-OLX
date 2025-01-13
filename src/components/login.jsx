@@ -7,6 +7,7 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const {currentUser} = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,6 +23,20 @@ function Login() {
         try {
             const user = await doSignInWithGoogle(); // Call the Google sign-in function
             console.log("Google login successful:", user);
+            const response = await fetch('http://localhost:8080/user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(currentUser),
+            });
+
+            if(response.ok){
+                const result = await response.json();
+                console.log("User Created Successfully: ");
+            } else{
+                console.log("Failed to create user");   
+            }
             window.location.href = '/dashboard'; // Redirect after successful login
         } catch (error) {
             setError(error.message);

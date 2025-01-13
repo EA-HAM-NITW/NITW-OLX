@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Navbar, Nav, Row, Col, Card, Button } from 'react-bootstrap';
 import { useAuth } from '../contexts/authContexts';  // Importing the custom hook for auth
 import { useNavigate } from 'react-router-dom';  // Use useNavigate instead of useHistory
@@ -7,7 +7,30 @@ import BottomBar from './bottomBar';
 
 function Homepage() {
     const { currentUser } = useAuth();  // Using the custom hook to check if the user is logged in
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();  // Initialize useNavigate
+
+    useEffect(()=>{
+        const fetchData = async ()=>{
+            try{
+                const response = await fetch("http://localhost:8080");
+
+                if(!response.ok){
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const result = await response.text();
+                setData(result);
+                console.log(result);
+                
+            } catch(err){
+                setError(err.message);
+            }
+        }
+
+        fetchData();
+    },[]);
 
     const items = [
         { id: 1, title: 'Used Laptop', price: '₹15,000', category: 'Electronics' },
@@ -25,6 +48,8 @@ function Homepage() {
 
     // Function to handle View Details button click
     const handleViewDetails = (itemId) => {
+        console.log(currentUser);
+        
         if (!currentUser) {
             navigate('/login');  // If not logged in, redirect to login page
         } else {
